@@ -1,0 +1,6 @@
+{% extends 'car/base.html' %}
+{% block title %} Accueil {% endblock %}
+{% block body_block %} 
+<h1> Parking </h1>
+ {% endblock %}
+

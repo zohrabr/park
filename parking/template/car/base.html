@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+<title>{% block title %} {% endblock %}</title>    
+</head>
+</head>
+
+    <body>
+
+
+{% if user.is_authenticated %}
+                   bienvenu, {{ user.first_name}} {{ user.last_name}}!
+                  </br>  <a href="/car/logout"> Déconnexion </a>
+		</br>    <a href="/car/add_parking">ajouter </a>un parking
+                   {% else %}
+                    	bienvenu 
+		<a href="/car/login"> se connecter </a>
+		</br><a href="/car/inscription"> inscription </a> 
+                   {% endif %}
+
+<hr/>
+              {% block body_block %} 
+                  
+{% endblock %}
+<hr/>
+<footer> &copy; Tous les droits sont réservés | Espace <a href="/admin/"> Admin </a> </footer>
+</body>
+</html>

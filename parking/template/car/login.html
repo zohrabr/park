@@ -1,0 +1,20 @@
+{% extends 'car/base.html' %}
+{% block title %} login {% endblock %}
+ {% block body_block %}
+
+<form id="login_form" method="post" action="/car/login/">
+	{% csrf_token %}
+        {% if bad_details %}
+        <p><strong>Your username and/or password were incorrect!</strong></p>
+        {% elif disabled_account %}
+        <p><strong>votre compte est actuellemnt désactivée; vous ne pouvez pas vous connecter</strong></p>
+        {% endif %}
+
+        email: <input type="text"  placeholder="votre email" name="email"  />
+        <br />
+        Password: <input type="password"  placeholder="mot de passe" name="password"  />
+        <br />
+        <button type="submit">se connecter</button>
+    </form>
+
+{% endblock %}
