@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
+from __future__ import division
 from django.shortcuts import render , render_to_response
 from django.http import HttpResponse
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse
-from car.models import  parking, User
-from car.forms import userform  , parkingform
+from car.models import  parking, User, owner,supressions
+from car.forms import  parkingform , userform, suppform
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import  login, logout, authenticate 
 from geoposition import Geoposition
@@ -17,19 +18,25 @@ def register(request):
 	context = RequestContext(request)
 	registred = False
 	if request.method =='POST' :
-		user_form =userform(data= request.POST)	
-		if user_form.is_valid() :
-			user = user_form.save()
-			user.set_password(user.password)
-			user.save()
+		
+		owner_form = userform(data= request.POST)	
+		if owner_form.is_valid():
+			
+			propr = owner_form.save(commit=False)
+			propr.set_password(propr.password)
+			
+			if 'teleport' in request.FILES:
+				propr.teleport =request.FILES['teleport']
+			propr.save()
 			registred = True 
 			return HttpResponseRedirect('/car/merci/')
 		else :
-			print user_form.errors
+			print owner_form.errors
 	else:
-		user_form= userform()
 		
-	return render_to_response('car/register.html',{'user_form': user_form, 'registred': registred}, context)
+		owner_form= userform()
+		
+	return render_to_response('car/register.html',{'user_form':owner_form, 'registred': registred}, context)
 
 
 
@@ -40,7 +47,7 @@ def merci(request):
 
 
 
-
+ 
 def accueil(request):
 	context = RequestContext(request)
 	return render_to_response('car/accueil.html',{},context)
@@ -62,8 +69,7 @@ def user_login(request):
 			else:
 				return HttpResponse("votre compte est désactivé")
 		else:
-			print "Invalid login details: {0}, {1}".format(mail,userpass)	
-			return HttpResponse("entrées invalides.")
+			return HttpResponse("<strong>votre @email et/ou mot de passe sont incorrectes !</strong>")
 	else:
 		return render_to_response('car/login.html', {}, context)
 
@@ -80,12 +86,12 @@ def user_logout(request):
 def add_parking(request):
 	context=RequestContext(request)
 	if request.user is not None:
-    		userf = request.user	
+    		own = owner.objects.get(username=request.user.username)	
 	if request.method == 'POST':
 		form= parkingform(request.POST)
 		if form.is_valid():
 			form = form.save(commit=False)
-			form.proprietaire=userf
+			form.proprietaire=own
 			if 'site' in request.FILES :
 				form.site=request.FILES['site']
 			form.save()
@@ -95,5 +101,44 @@ def add_parking(request):
 	else:
 		form = parkingform()
 	return render_to_response('car/add_parking.html',{'form' : form }, context)
+
+@login_required
+def list_park_owner(request):
+	context   =  RequestContext(request)
+	if request.user is not None:
+		ownercon = owner.objects.get(username=request.user.username)
+	list_park=parking.objects.filter(proprietaire=ownercon, accept=True)
+	return render_to_response('car/list_parking.html',{'list_park':list_park},context)
+
+
+@login_required
+def supprimer(request):
+	context=RequestContext(request)
+	if request.user is not None:
+		own=owner.objects.get(username=request.user.username)
+	if request.method=='POST':
+		nom=request.POST['name']
+		try:
+			p=parking.objects.get(proprietaire=own,namepark=nom)
+			p.delete()
+			return accueil(request)
+		except parking.DoesNotExist :				
+			return HttpResponse("<h1>auccun parking trouver!</h1> <h3>verifier le nom que vous avez entré</h3>")
+	else:
+		return render_to_response('car/delete.html',{}, context)
+
+def carte(request):
+    return render(request, 'car/carte.html', locals())
+
+
+def filterpark(request):
+    if request.method == "GET":
+        park = parking.objects.filter(accept=True)
+        park = list(park.values_list("namepark", "position","nbplacevide","nbrplace"))
+        return HttpResponse(json.dumps(park, cls=DjangoJSONEncoder), content_type="application/json")
+    else:
+        return HttpResponse()
+
+
 
 

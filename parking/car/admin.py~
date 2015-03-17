@@ -1,9 +1,13 @@
 from django.contrib import admin
-from car.models import parking
+from car.models import parking , owner,User, supressions
 
 # Register your models here.
 class Park(admin.ModelAdmin):
-	 list_display = ('namepark', 'nbrplace','propr','accept','identifiant')
+	 list_display = ('namepark', 'nbrplace','proprietaire','accept')
+class use(admin.ModelAdmin):
+	 list_display=('username', 'first_name','teleport')
+	
 
 admin.site.register(parking,Park)
- 
+admin.site.register(owner,use)
+admin.site.register(supressions)

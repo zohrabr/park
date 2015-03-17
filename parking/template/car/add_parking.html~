@@ -1,23 +1,46 @@
 {% extends 'car/base.html' %}
+{% load static %}
 {% block title %} ajout d'un parking {% endblock %}
- 
+{% load widget_tweaks %}
 {% block body_block %} 
-<h1> demande d'ajout d'un parking </h1> 
+
+<div class="span3">
+<h1> Demande d'ajout d'un parking </h1> 
+<div class="hero-unit">
 <form id="parking_form" method="post" action="/car/add_parking/">
 
             {% csrf_token %}
 		 
           {% for hidden in form.hidden_fields %}
-                {{ hidden }}
+               <h5> {{ hidden }}</h5>
             {% endfor %}
 
             {% for field in form.visible_fields %}
                 {{ field.errors }}
-                {{ field.help_text }}
-                {{ field }}
+               <label> {{ field.help_text }} </label></br>
+                  {% render_field field class+="form-control" %} 
+	
             {% endfor %} 
+</br>
 
-            <input type="submit" name="submit" value="demande" />
-        </form>
+            <input class="btn btn-primary" type="submit" name="submit" value="demande"  />
+        </form> </div>
+</div>
 
+<div class="span9">
+
+ <div class="panel panel-warning">
+  <div class="panel-heading">cliquer sur le boutton droit de la souris</div>
+ <div class="panel-body">
+{% include 'car/gmindex.html' %}
+     </div>
+     </div>
+            <script src="{% static 'js/add_script.js' %}"></script>
+</div>
+    
+{% endblock %}
+{% block script %}
+
+    
+    
 {% endblock %}

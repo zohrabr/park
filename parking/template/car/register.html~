@@ -1,35 +1,62 @@
 {% extends 'car/base.html' %}
+{% load static %}
 {% block title %} register here ! {% endblock %}
 
 
 
 {% block body_block %}
+<div class="span7"> 
+</br> </br> </br> </br>
+<div class="hero-unit">
+<div id="main-slider" class="carousel slide" data-ride="carousel">
+			<ol class="carousel-indicators">
+				<li data-target="#main-slider" data-slide-to="0" class="active"></li>
+				<li data-target="#main-slider" data-slide-to="1"></li>
+				<li data-target="#main-slider" data-slide-to="2"></li>
+				
+			</ol>
+			<div class="carousel-inner">
+				<div class="item active">
+					<img style="max-height: 380px" class="img-responsive" src="/static/slide/p6.jpg" alt="slider">
+					
+				</div>
+				<div class="item">
+					<img style="max-height: 380px" class="img-responsive" src="/static/slide/p4.jpg" alt="slider">
+					
+				</div>
+				<div class="item">
+					<img style="max-height: 380px" class="img-responsive" src="/static/slide/p3.jpg" alt="slider">
+					
+				</div>
+				
+				
+			</div>
+		</div>
+</div>
+</div>
+<div class="span1"></div>
+<div class="span4">
       <h1> Inscription (c'est gratuit ) </h1>
 	{% if registered %}
         <p>Merci pour votre inscription</p>
 
-      <!--  <p><a href="/rango/login/">Login</a> when you are ready to rango.</p> -->
+ 
         {% else %}
+<div class="hero-unit"> 
         <form  method="post" action="/car/inscription/" enctype="multipart/form-data">
             {% csrf_token %}
-            <h2 > enregistrer ici</h2>
-            <!-- Display each form here -->
+            <h2 > S'enregistrer ici</h2>
+      
 
             {% for field in user_form.visible_fields %}
             {{ field.errors }}
-            {{ field.help_text }}<br />
+           <label> {{ field.help_text }}</label><br />
             {{ field }}<br />
             {% endfor %}
-
-            {% for field in profil_form.visible_fields %}
-            {{ field.errors }}
-            {{ field.help_text }}<br/>
-            {{ field }}<br />
-            {% endfor %}
-
-            <br />
-            <!-- Provide a button to click to submit the form. -->
-       <input  type="submit" name="Inscription" value="inscription"/> 
-        </form>
+	    
+ 
+       <input class="btn btn-primary" type="submit" name="Inscription" value="inscription"/> 
+</br>
+        </form>  </div> </div>
         {% endif %}
    {% endblock %}
